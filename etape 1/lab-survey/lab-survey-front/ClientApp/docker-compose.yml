@@ -1,0 +1,9 @@
+version: '3'
+services:
+  lab-survey:
+    build:
+      context: ./
+    image: lab-survey
+    container_name: lab-survey
+    ports:
+        - "8080:80"
