@@ -196,6 +196,6 @@ CONTAINER ID        IMAGE               COMMAND                  CREATED        
 e75852c926aa        redis               "docker-entrypoint.s…"   33 minutes ago      Up 33 minutes       0.0.0.0:6379->6379/tcp   lab-survey-redis
 ```
 
-## Félicitation, vous avez déployé votre application de vote. 🎊🏆🎉
+## Félicitation, vous avez déployé votre application. 🎊🏆🎉
 
-Voilà maintenant vous savez comment construire un **DockerFile**, un \*_docker-compose_, ainsi que builder et deployer des conteneurs.
+Voilà maintenant vous savez comment construire un **DockerFile**, un fichier \*_docker-compose_, ainsi que builder et deployer des conteneurs.
