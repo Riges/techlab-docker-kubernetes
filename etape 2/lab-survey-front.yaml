@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: lab-survey-front
+spec:
+  replicas: 1
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  selector:
+    matchLabels:
+      app: lab-survey-front
+  template:
+    metadata:
+      labels:
+        app: lab-survey-front
+    spec:
+      containers:
+      - name: lab-survey-front
+        image: riges/lab-survey-front
+        env:
+        - name: REDIS
+          value: "lab-survey-redis"
+        - name: ASPNETCORE_ENVIRONMENT
+          value: "Production"
+        ports:
+        - containerPort: 5000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: lab-survey-api
+spec:
+  ports:
+  - name: http
+    port: 80
+    targetPort: 5000
+  selector:
+    app: lab-survey-api
