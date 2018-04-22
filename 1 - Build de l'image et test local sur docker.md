@@ -22,9 +22,9 @@ lab-survey-redis:
 
 #### Le Dockerfile
 
-Pour construire l'image nous auront besoin d'un 'Dockerfile', qui est le fichier permettant de définir le processus de construction de l'image. Le programme étant en .Net Core et que nous avons tous les outils le permettant, nous ferons un _multi-stage build_ permettant d'avoir une partie de build l'application sur une image dédier au build lors d'une étape, puis de récupérer le résultat du build pour lancer l'application sur une image dédier à l'hébergement de cette application.
+Pour construire l'image, nous aurons besoin d'un 'Dockerfile', un fichier permettant de définir le processus de construction de l'image. Le programme étant en .Net Core et comme Microsoft nous fournis tous les outils, nous ferons un _multi-stage build_ permettant d'avoir une partie de build de l'application sur une image dédier au build lors d'une étape. Puis nous récupérons le résultat du build pour lancer l'application sur une image dédiée à l'hébergement de cette application.
 
-Pour la partie build de l'application nous utiliserons l'image **microsoft/aspnetcore-build:2.0.6-2.1.101** que nous nommerons **build-env** et nous travaillerons dans le répertoire **/src**. Comme les dépendances changent moins que le code source d'une application nous nous en occuperons en premier afin que cette partie de l'image reste en cache. Pour pouvoir restaurer les dépendances grâce à la commande 'dotnet restore' nous copieront le fichier **lab-survey-front.csproj** dans l'image. Une fois cela fait nous copieront tout le reste des sources dans l'image et nous utiliserons la commande 'dotnet publish' en spécifiant que nous voulons la configuration **Release** et que le répertoire de sortie sera nommé **out**.
+Pour la partie build de l'application nous utiliserons l'image **microsoft/aspnetcore-build:2.0.6-2.1.101** que nous nommerons **build-env** et nous travaillerons dans le répertoire **/src**. Comme les dépendances changent moins que le code source d'une application, nous nous en occuperons en premier afin que cette partie de l'image reste en cache. Pour pouvoir restaurer les dépendances grâce à la commande 'dotnet restore', nous copierons le fichier **lab-survey-front.csproj** dans l'image. Une fois cela fait, nous copierons le reste des sources dans l'image et nous utiliserons la commande 'dotnet publish' en spécifiant que nous voulons la configuration **Release** et que le répertoire de sortie sera nommé **out**.
 
 ```Dockerfile
 FROM microsoft/aspnetcore-build:2.0.6-2.1.101 AS build-env
@@ -35,7 +35,7 @@ COPY ./lab-survey-front ./
 RUN dotnet publish -c Release -o out
 ```
 
-Pour l'étape d'hébergement de l'application compilée nous utiliserons l'image **microsoft/aspnetcore:2.0.6** en copiant les fichiers générés par l'étape **build-env** dans le répertoire **/src/out** dans le répertoire de travail courant de cette image **/app**. Nous lui préciserons une variable d'environnement, **ASPNETCORE_URLS**, permettant de choisir le format d'url de l'application (**http://+:5000**) ce qui permettra de connaitre le port/tcp à exposer. Le point d'entrée de l'image se fera sur la commande **dotnet** en utilisant la dll générée par l'étape de build **lab-survey-front.dll**.
+Pour l'étape d'hébergement de l'application compilée, nous utiliserons l'image **microsoft/aspnetcore:2.0.6** en copiant les fichiers générés par l'étape **build-env** dans le répertoire **/src/out** dans le répertoire de travail courant de cette image **/app**. Nous lui préciserons une variable d'environnement, **ASPNETCORE_URLS**, permettant de choisir le format d'url de l'application (**http://+:5000**) ce qui permettra de connaitre le port/tcp à exposer. Le point d'entrée de l'image se fera sur la commande **dotnet** en utilisant la dll générée par l'étape de build **lab-survey-front.dll**.
 
 ```Dockerfile
 FROM microsoft/aspnetcore:2.0.6
@@ -50,7 +50,7 @@ ENTRYPOINT ["dotnet", "lab-survey-front.dll"]
 
 Pour ce conteneur, on voudra le nommer **lab-survey-front** et on exposera le port **5000** du conteneur sur le port **8080** de l'hôte. On va aussi définir une variable d'environnement portant la clef **REDIS** et qui contiendra le nom du conteneur du redis (**lab-survey-redis**) afin de pouvoir l'appeler depuis l'application et une autre clef **ASPNETCORE_ENVIRONMENT** permettant de stipuler pour quel type d'environnement est buildée l'image (**Production**). Pour l'image, nous ne partons pas d'une existante. C'est pourquoi, nous devons la builder depuis le fichier 'Dockerfile' du dossier de l'application. Pour cela, nous allons définir un paramètre **build** et lui donner le chemin du dossier parent de ce Dockerfile précédemment créer : **./lab-survey-front**. Pour nommer l'image, nous prendrons **lab-survey-front** dans le but de s'en servir à nouveau sans la builder à nouveau.
 
-En prenant tout cela en compte on devrait avoir une configuration ressemblant à :
+En prenant tout cela en compte, on devrait avoir une configuration ressemblant à :
 
 ```yaml
 lab-survey-front:
@@ -160,7 +160,7 @@ redis                                                    alpine              cb1
 Sur ce retour, nous remarquons deux informations importantes :
 
 * _lab-survey-redis uses an image, skipping_ signifiant que lab-survey-redis n'a pas besoin d'être build car ce n'est qu'une définition du conteneur
-* _lab-survey-front_ a bien été builder il y a 10 secondes et que l'image porte l'id **f8c9262d55bf**. Elle est à présent dans la liste des images disponibles.
+* _lab-survey-front_ a bien été buildé il y a 10 secondes et que l'image porte l'id **f8c9262d55bf**. Elle est à présent dans la liste des images disponibles.
 
 ### Deployer localement 🚢
 
@@ -198,4 +198,4 @@ e75852c926aa        redis               "docker-entrypoint.s…"   33 minutes ag
 
 ## Félicitation, vous avez déployé votre application. 🎊🏆🎉
 
-Voilà maintenant vous savez comment construire un **DockerFile**, un fichier \*_docker-compose_, ainsi que builder et deployer des conteneurs.
+Voilà maintenant, vous savez comment construire un **DockerFile**, un fichier \*_docker-compose_, ainsi que builder et deployer des conteneurs.

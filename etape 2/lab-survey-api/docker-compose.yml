@@ -1,0 +1,20 @@
+version: '3'
+
+services:
+  lab-survey-redis:
+    image: redis
+    container_name: lab-survey-redis
+    ports:
+        - "6379:6379"
+
+  lab-survey-api:
+    image: lab-survey-api
+    container_name: lab-survey-api
+    build:
+      context: ./lab-survey-api/
+      dockerfile: Dockerfile
+    environment:
+      REDIS: lab-survey-redis
+      ASPNETCORE_ENVIRONMENT: Production
+    ports:
+      - "8080:5000"
