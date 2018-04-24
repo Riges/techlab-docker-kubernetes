@@ -1,6 +1,6 @@
 # Build de l'image et test local sur docker
 
-Nous partons sur le projet Lab survey ([https://github.com/Riges/lab-survey/tree/dotnet-core-proxy](https://github.com/Riges/lab-survey/tree/dotnet-core-proxy)). Cela va nous permettre d'avoir un front et son api dissocié du stockage qui sera un Redis.
+Nous partons sur le projet Lab survey ([https://github.com/Riges/lab-survey/tree/dotnet-core-proxy](https://github.com/Riges/lab-survey/tree/dotnet-core-proxy)). Cela va nous permettre d'avoir un front et son api dissociés du stockage qui sera un Redis.
 
 ## Definition des services 📝
 
@@ -22,7 +22,7 @@ lab-survey-redis:
 
 #### Le Dockerfile
 
-Pour construire l'image, nous aurons besoin d'un 'Dockerfile', un fichier permettant de définir le processus de construction de l'image. Le programme étant en .Net Core et comme Microsoft nous fournis tous les outils, nous ferons un _multi-stage build_ permettant d'avoir une partie de build de l'application sur une image dédier au build lors d'une étape. Puis nous récupérons le résultat du build pour lancer l'application sur une image dédiée à l'hébergement de cette application.
+Pour construire l'image, nous aurons besoin d'un 'Dockerfile', un fichier permettant de définir le processus de construction de l'image. Le programme étant en .Net Core et comme Microsoft nous fournit tous les outils, nous ferons un _multi-stage build_ permettant d'avoir une partie de build de l'application sur une image dédiée au build lors d'une étape. Puis nous récupérerons le résultat du build pour lancer l'application sur une image dédiée à l'hébergement de cette application.
 
 Pour la partie build de l'application nous utiliserons l'image **microsoft/aspnetcore-build:2.0.6-2.1.101** que nous nommerons **build-env** et nous travaillerons dans le répertoire **/src**. Comme les dépendances changent moins que le code source d'une application, nous nous en occuperons en premier afin que cette partie de l'image reste en cache. Pour pouvoir restaurer les dépendances grâce à la commande 'dotnet restore', nous copierons le fichier **lab-survey-front.csproj** dans l'image. Une fois cela fait, nous copierons le reste des sources dans l'image et nous utiliserons la commande 'dotnet publish' en spécifiant que nous voulons la configuration **Release** et que le répertoire de sortie sera nommé **out**.
 
@@ -48,7 +48,7 @@ ENTRYPOINT ["dotnet", "lab-survey-front.dll"]
 
 #### La définition de la configuration
 
-Pour ce conteneur, on voudra le nommer **lab-survey-front** et on exposera le port **5000** du conteneur sur le port **8080** de l'hôte. On va aussi définir une variable d'environnement portant la clef **REDIS** et qui contiendra le nom du conteneur du redis (**lab-survey-redis**) afin de pouvoir l'appeler depuis l'application et une autre clef **ASPNETCORE_ENVIRONMENT** permettant de stipuler pour quel type d'environnement est buildée l'image (**Production**). Pour l'image, nous ne partons pas d'une existante. C'est pourquoi, nous devons la builder depuis le fichier 'Dockerfile' du dossier de l'application. Pour cela, nous allons définir un paramètre **build** et lui donner le chemin du dossier parent de ce Dockerfile précédemment créer : **./lab-survey-front**. Pour nommer l'image, nous prendrons **lab-survey-front** dans le but de s'en servir à nouveau sans la builder à nouveau.
+Pour ce conteneur, on voudra le nommer **lab-survey-front** et on exposera le port **5000** du conteneur sur le port **8080** de l'hôte. On va aussi définir une variable d'environnement portant la clef **REDIS** et qui contiendra le nom du conteneur du redis (**lab-survey-redis**) afin de pouvoir l'appeler depuis l'application et une autre clef **ASPNETCORE_ENVIRONMENT** permettant de stipuler pour quel type d'environnement est buildée l'image (**Production**). Pour l'image, nous ne partons pas d'une existante. C'est pourquoi, nous devons la builder depuis le fichier 'Dockerfile' du dossier de l'application. Pour cela, nous allons définir un paramètre **build** et lui donner le chemin du dossier parent de ce Dockerfile précédemment créé : **./lab-survey-front**. Pour nommer l'image, nous prendrons **lab-survey-front** dans le but de s'en servir à nouveau sans la builder à nouveau.
 
 En prenant tout cela en compte, on devrait avoir une configuration ressemblant à :
 
@@ -164,7 +164,7 @@ Sur ce retour, nous remarquons deux informations importantes :
 
 ### Deployer localement 🚢
 
-Pour déployer localement, il faut utiliser la commande **up** suivi du paramètre **-d** afin de détacher les conteneurs du terminal qui a lancé la commande et ainsi éviter que la commande ne se termine pas une fois le terminal fermé.
+Pour déployer localement, il faut utiliser la commande **up** suivie du paramètre **-d** afin de détacher les conteneurs du terminal qui a lancé la commande et ainsi éviter que la commande ne se termine pas une fois le terminal fermé.
 
 `docker-compose up -d`
 
@@ -184,10 +184,10 @@ Creating lab-survey-redis ... done
 Creating lab-survey-front ... done
 ```
 
-Si tout c'est bien passé, vous devriez voir un retour comme ci-dessus. Cependant, pour vérifier que les conteneurs sont bien lancés, deux solutions s'offrent à vous :
+Si tout s'est bien passé, vous devriez voir un retour comme ci-dessus. Cependant, pour vérifier que les conteneurs sont bien lancés, deux solutions s'offrent à vous :
 
 * aller sur [http://localhost:8080](http://localhost:8080) ![preview de l'application](assets/etape-1-lab-survey-preview.png)
-* lancer une commande 'docker ps --filter name=lab-survey' afin de voir les conteneurs lancés actuellement en filtrant par leur nom.
+* lancer une commande 'docker ps --filter name=lab-survey' afin de voir les conteneurs lancés actuellement en filtrant par leurs noms.
 
 ```sh
 > docker ps --filter name=lab-survey
@@ -198,4 +198,4 @@ e75852c926aa        redis               "docker-entrypoint.s…"   33 minutes ag
 
 ## Félicitation, vous avez déployé votre application. 🎊🏆🎉
 
-Voilà maintenant, vous savez comment construire un **DockerFile**, un fichier \*_docker-compose_, ainsi que builder et deployer des conteneurs.
+Voilà maintenant, vous savez comment construire un **DockerFile**, un fichier _docker-compose_, ainsi que builder et deployer des conteneurs.
