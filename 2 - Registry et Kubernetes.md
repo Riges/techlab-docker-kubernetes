@@ -1,10 +1,10 @@
 # Registry et Kubernetes
 
-Maintenant que l'application est prête nous allons voir comment héberger les images ainsi que les déployés sur le cluster Kubernetes.
+Maintenant que l'application est prête nous allons voir comment héberger les images ainsi que les déployer sur le cluster Kubernetes.
 
 ## Docker Repository
 
-Pour héberger nos images, nous nous servirons de la registry docker hub, qui est celle par défaut fourni par Docker.
+Pour héberger nos images, nous nous servirons de la registry docker hub, qui est celle par défaut fournie par Docker.
 
 ### Identification
 
@@ -57,7 +57,7 @@ Pour vérifier, allez sur [https://hub.docker.com](https://hub.docker.com). Vous
 
 ## Kubernetes Dashboard
 
-Le projet Kubernetes Dashboard est un exemple d'implémentation de dashboard web, fournis par les équipes de Kubernetes, qui vous sera très pratique afin de suivre l'avancer des déploiements et du cycle de vie de l'application pendant notre session.
+Le projet Kubernetes Dashboard est un exemple d'implémentation de dashboard web, fourni par les équipes de Kubernetes, qui vous sera très pratique afin de suivre l'avancer des déploiements et du cycle de vie de l'application pendant notre session.
 
 Pour cela, on va **appliquer** un manifeste fourni par le projet afin de déployer les ressources nécessaires au bon fonctionnement du dashboard en précisant que nous voulons appliquer un fichier (**-f**) comme suit : `kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/master/src/deploy/recommended/kubernetes-dashboard.yaml`
 
@@ -90,7 +90,7 @@ metadata:
   namespace: kube-system
 ```
 
-Une fois le compte créé, il lui faudra crée une ressource de type **ClusterRoleBinding** qui permettra de déclarer les droits à associer au compte **admin-user**. Comme le dashboard nécessite de pouvoir gérer le cluster on déclarera un droit de type **ClusterRole** qui se nome **cluster-admin**.
+Une fois le compte créé, il faudra lui créer une ressource de type **ClusterRoleBinding** qui permettra de déclarer les droits à associer au compte **admin-user**. Comme le dashboard nécessite de pouvoir gérer le cluster on déclarera un droit de type **ClusterRole** qui se nomme **cluster-admin**.
 
 ```yaml
 apiVersion: rbac.authorization.k8s.io/v1
@@ -119,7 +119,7 @@ serviceaccount "admin-user" created
 clusterrolebinding "admin-user" created
 ```
 
-Maintenant que nous avons créé le compte, il nous faut récupérer le token. Pour cela nous listeront les ressources de type **secret** avec la commande **get**. Si vous vous souvenez bien, le compte a été crée dans le namespace **kube-system**, il faut donc le préciser grâce au paramètre -n. Cela donnerait `kubectl -n kube-system get secret`.
+Maintenant que nous avons créé le compte, il nous faut récupérer le token. Pour cela nous listeront les ressources de type **secret** avec la commande **get**. Si vous vous souvenez bien, le compte a été créé dans le namespace **kube-system**, il faut donc le préciser grâce au paramètre -n. Cela donnerait `kubectl -n kube-system get secret`.
 
 ```sh
 > kubectl -n kube-system get secret
@@ -142,7 +142,7 @@ kube-dns-token-9ww4v                             kubernetes.io/service-account-t
 kube-proxy-token-b7jlw                           kubernetes.io/service-account-token   3         5d
 ```
 
-Il faut chercher le secret qui commence par `admin-user` (**admin-user-token-5mctg** dans notre exemple) puis nous utiliserons la commande **describe** afin de connaitre le token. Pour cette commande, on doit préciser le type de resource, **secret** dans notre cas, ainsi que du nom de la ressource. Pour cette exemple, cela donnerait `kubectl -n kube-system describe secret admin-user-token-5mctg`
+Il faut chercher le secret qui commence par `admin-user` (**admin-user-token-5mctg** dans notre exemple) puis nous utiliserons la commande **describe** afin de connaître le token. Pour cette commande, on doit préciser le type de resource, **secret** dans notre cas, ainsi que du nom de la ressource. Pour cette exemple, cela donnerait `kubectl -n kube-system describe secret admin-user-token-5mctg`
 
 ```sh
 > kubectl -n kube-system describe secret admin-user-token-5mctg
@@ -173,7 +173,7 @@ Pour le déployment on donnera comme metadata :
 
 * un nom **lab-surbey-redis** afin d'identifier le back.
 
-La partie **spec** correspond aux configurations de votre pod, par le champ **replicat** qui permettra de définir le nombre d'instance qu'y devront être déployé par l'orchestrateur et le champs **template** qui, un peu comme un docker-compose, définit l'application.
+La partie **spec** correspond aux configurations de votre pod, par le champ **replicat** qui permettra de définir le nombre d'instance qu'y devront être déployées par l'orchestrateur et le champs **template** qui, un peu comme un docker-compose, définit l'application.
 
 Ce **template** comporte des **metadata**, permettant de donner un label qui permettra au service de matcher avec le pod, et à nouveau un champs **spec** où on pourra définir le container. En prenant exemple sur le docker compose, nous le nommerons **lab-surbey-redis**. On prendra l'image **redis** et on précisera qu'on expose le **port** de redis (**6379**) du container grâce à **containerPort: 6379**.
 
@@ -201,9 +201,9 @@ spec:
 
 ### Exposé le back
 
-Pour pouvoir exposer cette application de manière public, ou entre deux pods, il faut lui déclarer un service. Pour ce faire, il faut déclarer un _kind_ de type **service**, puis lui donner un nom **lab-survey-redis**. Ensuite, nous définirons les **spec** du service :
+Pour pouvoir exposer cette application de manière publique, ou entre deux pods, il faut lui déclarer un service. Pour ce faire, il faut déclarer un _kind_ de type **service**, puis lui donner un nom **lab-survey-redis**. Ensuite, nous définirons les **spec** du service :
 
-* les port exposés, **6379**.
+* le port exposé, **6379**.
 * Il faut aussi définir quel service utiliser. Avec Kubernetes la bonne manière est de se baser sur les labels afin de matcher les services à une application. Dans ce cas, il faut utiliser le paramètre **selector** et nous lui donnerons donc simplement la règle **app: lab-survey-redis** qui est celle définie dans notre déploiement.
 
 Le service par défaut sur Kubernetes est le _ClusterIP_, cela permet d'exposer un ou des pods (par répartition de charge) à d'autre à l'intérieur du cluster.
@@ -304,7 +304,7 @@ service "lab-survey-front" created
 
 ### Test du deploiement
 
-Dans un cas plus "normal", nous aurions déclarer le service front en _type_ **loadbalancer** afin de rendre accessible l'application en dehors du cluster. Mais malheureusement, par défaut Kubernetes ne fournit pas ce type de ressource sur un cluster "local". Si vous installez cela sur un cluster géré par un Rancher Labs, ou un cloud provider (Google Cloud Plateforme, Azure, AWS, ...) il vous suffirait de rajouter l'information de type au manifeste du service et vous auriez une ip externe pour tester votre application. À défaut de meilleure solution, nous allons voir comment tester cela grâce à la commande **proxy**.
+Dans un cas plus "normal", nous aurions déclaré le service front en _type_ **loadbalancer** afin de rendre accessible l'application en dehors du cluster. Mais malheureusement, par défaut Kubernetes ne fournit pas ce type de ressource sur un cluster "local". Si vous installez cela sur un cluster géré par un Rancher Labs, ou un cloud provider (Google Cloud Plateforme, Azure, AWS, ...) il vous suffirait de rajouter l'information de type au manifeste du service et vous auriez une ip externe pour tester votre application. À défaut de meilleure solution, nous allons voir comment tester cela grâce à la commande **proxy**.
 
 Pour cela, si votre commande `kubectl proxy` tourne toujours, il vous suffit d'utiliser la syntaxe : http://localhost:8001/api/v1/proxy/namespaces/default/services/**SERVICE-NAME**:**SERVICE-PORT-NAME-OU-NUMEROS-DE-PORT**/
 
