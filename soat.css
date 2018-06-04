@@ -1,0 +1,40 @@
+@import url('https://use.fontawesome.com/releases/v5.0.12/css/all.css');
+@import url('https://fonts.googleapis.com/css?family=Raleway');
+
+.reveal h1,
+.reveal h2,
+.reveal h3,
+.reveal h4,
+.reveal h5,
+.reveal h6 {
+  color: #262626;
+  font-family: 'Raleway', sans-serif;
+}
+.reveal h1 {
+  font-size: 1.6em;
+  font-style: italic;
+  color: white;
+  margin-top: -1em;
+  font-weight: bold;
+}
+
+.reveal {
+  color: #262626;
+  font-family: 'Raleway', sans-serif;
+}
+
+.reveal .controls {
+  color: white;
+}
+
+.reveal code {
+  font-family: monospace;
+  text-transform: none;
+  color: #63bda2;
+}
+
+.reveal h4 img {
+  margin: 0;
+  width: 50px;
+  border-radius: 1em;
+}
