@@ -6,7 +6,7 @@ services:
     container_name: lab-survey-front
     build:
       context: .
-      dockerfile: lab-survey-front/Dockerfile
+      dockerfile: Dockerfile
     environment:
       REDIS: lab-survey-redis
       ASPNETCORE_ENVIRONMENT: Production
