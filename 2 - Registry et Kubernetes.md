@@ -22,26 +22,15 @@ Login Succeeded
 
 ### Envoyer les images
 
-Pour pouvoir envoyer des images sur le docker hub, il faut au préalable les **tagger** en suivant cette nomenclature **VOTRE-USERNAME/NOM-DE-L-IMAGE**, ce qui dans mon cas pour **lab-survey-api** donne `docker tag lab-survey-api riges/lab-survey-api` et pour lab-survey-front `docker tag lab-survey-front riges/lab-survey-front`.
+Pour pouvoir envoyer des images sur le docker hub, il faut au préalable les **tagger** en suivant cette nomenclature **VOTRE-USERNAME/NOM-DE-L-IMAGE**, ce qui dans mon cas pour **lab-survey-front** donne `docker tag lab-survey-front riges/lab-survey-front`.
 
 ```sh
-> docker tag lab-survey-api riges/lab-survey-api
 > docker tag lab-survey-front riges/lab-survey-front
 ```
 
-Après, il vous suffit de **push** les images en se servant de leurs tags. Cela devrait être 'docker push riges/lab-survey-api' et 'docker push riges/lab-survey-front'.
+Après, il vous suffit de **push** les images en se servant de leurs tags. Cela devrait être 'docker push riges/lab-survey-front'.
 
 ```sh
-> docker push riges/lab-survey-api
-The push refers to repository [docker.io/riges/lab-survey-api]
-53dfd869b11e: Pushed
-ec079c4191b5: Pushed
-c2523d9670b0: Mounted from microsoft/aspnetcore
-d2a32c00a3a4: Mounted from microsoft/aspnetcore
-8811b8947d7f: Mounted from microsoft/aspnetcore
-2b21077ee3b4: Mounted from microsoft/aspnetcore
-e1df5dc88d2c: Mounted from microsoft/dotnet
-latest: digest: sha256:020e2c4a9f5ba334cf1a874e9d3eefea3dc19391c550bc1116d5b569f4733256 size: 1790
 > docker push riges/lab-survey-front
 The push refers to repository [docker.io/riges/lab-survey-front]
 b55cb9ee1e35: Pushed
@@ -171,7 +160,7 @@ Pour qu'une application soit déployée et soit accessible hors du pod sur Kuber
 
 Pour le déployment on donnera comme metadata :
 
-* un nom **lab-surbey-redis** afin d'identifier le back.
+- un nom **lab-surbey-redis** afin d'identifier le back.
 
 La partie **spec** correspond aux configurations de votre pod, par le champ **replicat** qui permettra de définir le nombre d'instance qu'y devront être déployées par l'orchestrateur et le champs **template** qui, un peu comme un docker-compose, définit l'application.
 
@@ -203,8 +192,8 @@ spec:
 
 Pour pouvoir exposer cette application de manière publique, ou entre deux pods, il faut lui déclarer un service. Pour ce faire, il faut déclarer un _kind_ de type **service**, puis lui donner un nom **lab-survey-redis**. Ensuite, nous définirons les **spec** du service :
 
-* le port exposé, **6379**.
-* Il faut aussi définir quel service utiliser. Avec Kubernetes la bonne manière est de se baser sur les labels afin de matcher les services à une application. Dans ce cas, il faut utiliser le paramètre **selector** et nous lui donnerons donc simplement la règle **app: lab-survey-redis** qui est celle définie dans notre déploiement.
+- le port exposé, **6379**.
+- Il faut aussi définir quel service utiliser. Avec Kubernetes la bonne manière est de se baser sur les labels afin de matcher les services à une application. Dans ce cas, il faut utiliser le paramètre **selector** et nous lui donnerons donc simplement la règle **app: lab-survey-redis** qui est celle définie dans notre déploiement.
 
 Le service par défaut sur Kubernetes est le _ClusterIP_, cela permet d'exposer un ou des pods (par répartition de charge) à d'autre à l'intérieur du cluster.
 
@@ -238,12 +227,12 @@ En plus du _template_ du pod, nous allons alors spécifier que nous ne voulons q
 
 La partie _spec_ comporte la définition du _containers_ que nous configurerons comme suit :
 
-* Un nom, qui sera donc **lab-survey-front**.
-* l'**image** docker que nous utiliserons. Nous prendrons donc, l'image **VOTRE-USERNAME/lab-survey-front**.
-* Comme pour le _docker-compose.yaml_ nous donnons deux variables d'environement (**env**) :
-  * **REDIS** avec comme valeur le nom du serveur exposant le back (**lab-survey-redis**)
-  * **ASPNETCORE_ENVIRONMENT** qui contiendra **Production** pour que l'application prenne la bonne configuration.
-* Pour les _ports_, nous exposerons le port **5000**, qu'utilise l'application en .Net Core.
+- Un nom, qui sera donc **lab-survey-front**.
+- l'**image** docker que nous utiliserons. Nous prendrons donc, l'image **VOTRE-USERNAME/lab-survey-front**.
+- Comme pour le _docker-compose.yaml_ nous donnons deux variables d'environement (**env**) :
+  - **REDIS** avec comme valeur le nom du serveur exposant le back (**lab-survey-redis**)
+  - **ASPNETCORE_ENVIRONMENT** qui contiendra **Production** pour que l'application prenne la bonne configuration.
+- Pour les _ports_, nous exposerons le port **5000**, qu'utilise l'application en .Net Core.
 
 ```yaml
 apiVersion: apps/v1
